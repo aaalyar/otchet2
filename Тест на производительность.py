@@ -38,23 +38,11 @@ def kruskal(vertices, edges):
             total_cost += weight
 
     return mst, total_cost
-# Пример использования
-if __name__ == "__main__":
-    vertices = [0, 1, 2, 3]  # Вершины графа
-    edges = [  # Рёбра графа (начальная вершина, конечная вершина, вес)
-        (0, 1, 10),
-        (0, 2, 6),
-        (0, 3, 5),
-        (1, 3, 15),
-        (2, 3, 4)
-    ]
-    mst, total_cost = kruskal(vertices, edges)
-    print("Кратчайшее связывающее дерево:", mst)
-    print("Общая стоимость:", total_cost)
 
 # Тесты
 class TestKruskalAlgorithm(unittest.TestCase):
     def test_basic_case(self):
+        start_time = time.time()
         vertices = [0, 1, 2, 3]
         edges = [
             (0, 1, 10),
@@ -64,17 +52,59 @@ class TestKruskalAlgorithm(unittest.TestCase):
             (2, 3, 4)
         ]
         mst, cost = kruskal(vertices, edges)
-        expected_cost = 19  # Проверка ожидаемой стоимости минимального остовного дерева
+        expected_cost = 19
         self.assertEqual(cost, expected_cost)
-        self.assertEqual(len(mst), 3)  # Ожидаемое количество рёбер в MST = V - 1
+        self.assertEqual(len(mst), 3)
+        end_time = time.time()
+        print(f"Test Basic Case: PASSED in {end_time - start_time:.4f} seconds")
 
     def test_large_graph_performance(self):
+        start_time = time.time()
         vertices = list(range(1000))
         edges = [(i, (i + 1) % 1000, i % 100) for i in range(1000)]
-        start_time = time.time()
         kruskal(vertices, edges)
         end_time = time.time()
-        print(f"Time taken for 1000 vertices: {end_time - start_time:.4f} seconds")
+        print(f"Test Large Graph Performance: PASSED in {end_time - start_time:.4f} seconds")
+
+    def test_dense_graph(self):
+        start_time = time.time()
+        vertices = list(range(50))
+        edges = [(i, j, i + j) for i in range(50) for j in range(i + 1, 50)]
+        mst, cost = kruskal(vertices, edges)
+        self.assertEqual(len(mst), len(vertices) - 1)
+        print(f"Cost of MST for Dense Graph: {cost}")
+        end_time = time.time()
+        print(f"Test Dense Graph: PASSED in {end_time - start_time:.4f} seconds")
+
+    def test_graph_with_negative_weights(self):
+        start_time = time.time()
+        vertices = [0, 1, 2, 3, 4]
+        edges = [
+            (0, 1, -1),
+            (1, 2, -2),
+            (2, 3, -3),
+            (3, 4, -4),
+            (4, 0, -5)
+        ]
+        mst, cost = kruskal(vertices, edges)
+        self.assertEqual(len(mst), len(vertices) - 1)
+        print(f"Cost of MST for Graph with Negative Weights: {cost}")
+        end_time = time.time()
+        print(f"Test Graph with Negative Weights: PASSED in {end_time - start_time:.4f} seconds")
+
+    def test_disconnected_graph(self):
+        start_time = time.time()
+        vertices = [0, 1, 2, 3, 4, 5]
+        edges = [
+            (0, 1, 1),
+            (1, 2, 2),
+            (3, 4, 3)
+        ]
+        mst, cost = kruskal(vertices, edges)
+        self.assertEqual(len(mst), 3)
+        print(f"Cost of MST for Disconnected Graph: {cost}")
+        end_time = time.time()
+        print(f"Test Disconnected Graph: PASSED in {end_time - start_time:.4f} seconds")
 
 if __name__ == '__main__':
     unittest.main()
